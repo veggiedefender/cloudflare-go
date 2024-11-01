@@ -26,6 +26,29 @@ const (
 	Infrastructure AccessApplicationType = "infrastructure"
 )
 
+type AccessDomainType string
+
+const (
+	AccessDomainPublic  AccessDomainType = "public"
+	AccessDomainPrivate AccessDomainType = "private"
+)
+
+type AccessSelfHostedDomain struct {
+	Type        AccessDomainType `json:"type"`
+	Destination string           `json:"destination"`
+}
+
+func (domain *AccessSelfHostedDomain) UnmarshalJSON(buf []byte) error {
+	// Backwards compatibility for plain strings, which are considered to be public domains
+	if err := json.Unmarshal(buf, &domain.Destination); err == nil {
+		domain.Type = AccessDomainPublic
+		return nil
+	}
+
+	type Alias AccessSelfHostedDomain
+	return json.Unmarshal(buf, (*Alias)(domain))
+}
+
 // AccessApplication represents an Access application.
 type AccessApplication struct {
 	GatewayRules             []AccessApplicationGatewayRule       `json:"gateway_rules,omitempty"`
@@ -34,7 +57,7 @@ type AccessApplication struct {
 	LogoURL                  string                               `json:"logo_url,omitempty"`
 	AUD                      string                               `json:"aud,omitempty"`
 	Domain                   string                               `json:"domain"`
-	SelfHostedDomains        []string                             `json:"self_hosted_domains"`
+	SelfHostedDomains        []AccessSelfHostedDomain             `json:"self_hosted_domains"`
 	Type                     AccessApplicationType                `json:"type,omitempty"`
 	SessionDuration          string                               `json:"session_duration,omitempty"`
 	SameSiteCookieAttribute  string                               `json:"same_site_cookie_attribute,omitempty"`

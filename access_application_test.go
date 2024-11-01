@@ -163,7 +163,12 @@ func TestAccessApplication(t *testing.T) {
 				"aud": "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
 				"name": "Admin Site",
 				"domain": "test.example.com/admin",
-				"self_hosted_domains": ["test.example.com/admin", "test.example.com/admin2"],
+				"self_hosted_domains": [
+					"test.example.com/admin",
+					"test.example.com/admin2",
+					{"type": "public", "destination": "test.example.com/admin3"},
+					{"type": "private", "destination": "192.0.2.1"}
+				],
 				"type": "self_hosted",
 				"session_duration": "24h",
 				"allowed_idps": ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"],
@@ -207,13 +212,18 @@ func TestAccessApplication(t *testing.T) {
 	updatedAt, _ := time.Parse(time.RFC3339, "2014-01-01T05:20:00.12345Z")
 
 	want := AccessApplication{
-		ID:                       "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
-		CreatedAt:                &createdAt,
-		UpdatedAt:                &updatedAt,
-		AUD:                      "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
-		Name:                     "Admin Site",
-		Domain:                   "test.example.com/admin",
-		SelfHostedDomains:        []string{"test.example.com/admin", "test.example.com/admin2"},
+		ID:        "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
+		CreatedAt: &createdAt,
+		UpdatedAt: &updatedAt,
+		AUD:       "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
+		Name:      "Admin Site",
+		Domain:    "test.example.com/admin",
+		SelfHostedDomains: []AccessSelfHostedDomain{
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin2"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin3"},
+			{Type: AccessDomainPrivate, Destination: "192.0.2.1"},
+		},
 		Type:                     "self_hosted",
 		SessionDuration:          "24h",
 		AllowedIdps:              []string{"f174e90a-fafe-4643-bbbc-4a0ed4fc8415"},
@@ -281,7 +291,12 @@ func TestCreateAccessApplications(t *testing.T) {
 				"aud": "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
 				"name": "Admin Site",
 				"domain": "test.example.com/admin",
-				"self_hosted_domains": ["test.example.com/admin", "test.example.com/admin2"],
+				"self_hosted_domains": [
+					"test.example.com/admin",
+					"test.example.com/admin2",
+					{"type": "public", "destination": "test.example.com/admin3"},
+					{"type": "private", "destination": "192.0.2.1"}
+				],
 				"type": "self_hosted",
 				"session_duration": "24h",
 				"allowed_idps": ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"],
@@ -323,10 +338,15 @@ func TestCreateAccessApplications(t *testing.T) {
 	createdAt, _ := time.Parse(time.RFC3339, "2014-01-01T05:20:00.12345Z")
 	updatedAt, _ := time.Parse(time.RFC3339, "2014-01-01T05:20:00.12345Z")
 	fullAccessApplication := AccessApplication{
-		ID:                       "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
-		Name:                     "Admin Site",
-		Domain:                   "test.example.com/admin",
-		SelfHostedDomains:        []string{"test.example.com/admin", "test.example.com/admin2"},
+		ID:     "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
+		Name:   "Admin Site",
+		Domain: "test.example.com/admin",
+		SelfHostedDomains: []AccessSelfHostedDomain{
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin2"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin3"},
+			{Type: AccessDomainPrivate, Destination: "192.0.2.1"},
+		},
 		Type:                     "self_hosted",
 		SessionDuration:          "24h",
 		AUD:                      "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
@@ -406,7 +426,12 @@ func TestUpdateAccessApplication(t *testing.T) {
 				"aud": "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
 				"name": "Admin Site",
 				"domain": "test.example.com/admin",
-				"self_hosted_domains": ["test.example.com/admin", "test.example.com/admin2"],
+				"self_hosted_domains": [
+					"test.example.com/admin",
+					"test.example.com/admin2",
+					{"type": "public", "destination": "test.example.com/admin3"},
+					{"type": "private", "destination": "192.0.2.1"}
+				],
 				"type": "self_hosted",
 				"session_duration": "24h",
 				"allowed_idps": ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"],
@@ -446,10 +471,15 @@ func TestUpdateAccessApplication(t *testing.T) {
 	}
 
 	fullAccessApplication := AccessApplication{
-		ID:                       "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
-		Name:                     "Admin Site",
-		Domain:                   "test.example.com/admin",
-		SelfHostedDomains:        []string{"test.example.com/admin", "test.example.com/admin2"},
+		ID:     "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
+		Name:   "Admin Site",
+		Domain: "test.example.com/admin",
+		SelfHostedDomains: []AccessSelfHostedDomain{
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin2"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin3"},
+			{Type: AccessDomainPrivate, Destination: "192.0.2.1"},
+		},
 		Type:                     "self_hosted",
 		SessionDuration:          "24h",
 		AUD:                      "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
@@ -566,7 +596,12 @@ func TestUpdateAccessApplicationOmitPolicies(t *testing.T) {
 				"aud": "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
 				"name": "Admin Site",
 				"domain": "test.example.com/admin",
-				"self_hosted_domains": ["test.example.com/admin", "test.example.com/admin2"],
+				"self_hosted_domains": [
+					"test.example.com/admin",
+					"test.example.com/admin2",
+					{"type": "public", "destination": "test.example.com/admin3"},
+					{"type": "private", "destination": "192.0.2.1"}
+				],
 				"type": "self_hosted",
 				"session_duration": "24h",
 				"allowed_idps": ["f174e90a-fafe-4643-bbbc-4a0ed4fc8415"],
@@ -606,10 +641,15 @@ func TestUpdateAccessApplicationOmitPolicies(t *testing.T) {
 	}
 
 	fullAccessApplication := AccessApplication{
-		ID:                       "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
-		Name:                     "Admin Site",
-		Domain:                   "test.example.com/admin",
-		SelfHostedDomains:        []string{"test.example.com/admin", "test.example.com/admin2"},
+		ID:     "480f4f69-1a28-4fdd-9240-1ed29f0ac1db",
+		Name:   "Admin Site",
+		Domain: "test.example.com/admin",
+		SelfHostedDomains: []AccessSelfHostedDomain{
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin2"},
+			{Type: AccessDomainPublic, Destination: "test.example.com/admin3"},
+			{Type: AccessDomainPrivate, Destination: "192.0.2.1"},
+		},
 		Type:                     "self_hosted",
 		SessionDuration:          "24h",
 		AUD:                      "737646a56ab1df6ec9bddc7e5ca84eaf3b0768850f3ffb5d74f1534911fe3893",
